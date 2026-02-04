@@ -123,11 +123,6 @@ This analysis provides answers to:
 - Some transactions may have data quality issues that are identified in the analysis
 - All queries are optimized for performance on the full dataset
 
-## 🤝 Contributing
-
-This is a portfolio project by **Sachini Hewahattage**. Feedback and suggestions are welcome!
-
-**GitHub:** https://github.com/Sachinisand/E-commerce-SQL-Case-Study
 
 ## 📄 License
 
