@@ -1,225 +1,78 @@
-# E-commerce SQL Case Study - Key Findings & Business Insights
+# Key findings and recommendations
 
-## Executive Summary
+All numbers come from the query results in [`../results/`](../results/) (file names in brackets).
+Period: 1 Dec 2010 – 9 Dec 2011. Revenue = product sales in GBP after the cleaning rules in [`sql/01_clean.sql`](../sql/01_clean.sql).
 
-This document contains insights from comprehensive SQL analysis of e-commerce transaction data spanning 2010-2011. The analysis covers customer behavior, sales performance, and product trends.
+## 1. A small group of customers carries the business
 
----
+- 4,324 customers with an ID. The **top 1 % bring 29.8 %** of revenue, the **top 10 % bring 59.8 %**, the top 20 % bring 73.5 % *(customer_concentration)*.
+- RFM segments *(rfm_segments)*:
 
-## 🔍 Dataset Overview
+| Segment | Customers | % customers | Revenue | % revenue | Median days since last order | Median orders |
+|---|---:|---:|---:|---:|---:|---:|
+| Champions | 1,126 | 26.0 % | £5.68M | 68.6 % | 11 | 7 |
+| Loyal | 839 | 19.4 % | £1.17M | 14.1 % | 41 | 3 |
+| At risk | 629 | 14.5 % | £0.72M | 8.7 % | 144 | 3 |
+| Lost / hibernating | 1,101 | 25.5 % | £0.45M | 5.5 % | 215 | 1 |
+| New / promising | 329 | 7.6 % | £0.13M | 1.6 % | 19 | 1 |
+| Needs attention | 300 | 6.9 % | £0.12M | 1.4 % | 53 | 1 |
 
-- **Total Records:** 541,911 transactions
-- **Time Period:** December 2010 - December 2011 (approximately 13 months)
-- **Geographic Scope:** Multiple countries (UK-based retailer, international shipping)
-- **Customer Base:** Mix of new and repeat customers
-- **Product Range:** Retail gifts, household items, and decorative products
+**Recommendation:** treat Champions as key accounts (personal contact, early access to the Q4 range). Losing a handful of them costs more than losing hundreds of one-time buyers.
 
----
+## 2. Revenue at risk is identifiable
 
-## 📊 Key Findings
+- **629 "At risk" customers** ordered a median of 3 times but not for a median of **144 days**; together they were worth **£724k**.
+- **Recommendation:** a win-back campaign aimed only at this group. Winning back a tenth of their past revenue (~£72k) would be worth about half of what the whole "New / promising" segment brought in (£133k from 329 customers). This is a hypothesis to test with a control group, not a forecast.
 
-### 1. Customer Insights
+## 3. Customers come back, but slowly
 
-#### Customer Distribution
-- **Unique Customers:** Identified through the analysis
-- **Geographic Spread:** Customers across multiple countries with UK as primary market
-- **Repeat Purchase Rate:** Significant portion are repeat customers (excellent for retention)
+- **65.2 %** of customers ordered at least twice; the median customer placed 2 orders *(repeat_customers)*.
+- Of customers whose first order was in 2011, on average **~20 % ordered again in the following month** (14–24 % depending on the cohort) *(cohort_retention)*.
+- The Dec 2010 cohort shows 32–40 % every month. This is not better onboarding: the data starts in Dec 2010, so this group includes long-time customers.
+- **Recommendation:** a structured second-order offer within 30 days of the first order, measured on the next cohorts.
 
-#### Customer Segmentation (RFM Analysis)
-- **Champions:** High-value, recent, frequent purchasers - **PRIORITY**: Focus retention efforts
-- **Loyal Customers:** Strong historical value, maintain engagement
-- **At Risk:** Declining frequency or recency - **OPPORTUNITY**: Win-back campaigns
-- **Lost Customers:** No recent activity - Consider re-engagement campaigns
+## 4. These are mostly business buyers
 
-#### Customer Lifetime Value (CLV)
-- **High-Value Customers:** Represent disproportionate share of revenue (80/20 rule applies)
-- **Top 20% of Customers:** Generate majority of revenue
-- **Average CLV:** Varies significantly - data-driven segmentation needed
-- **Repeat Purchase Rate:** Indicates strong customer loyalty potential
+- Median order **£301**, mean £499, top 10 % of orders above £906, median **15 different products per order** *(order_size)*.
+- Orders happen in office hours (peak at **12:00**, almost nothing after 18:00) and **never on Saturdays** *(revenue_by_hour, days_with_sales)*.
+- **Recommendation:** plan campaigns, customer service and stock for weekday business hours; B2B tactics (volume pricing, reorder reminders) fit better than consumer tactics.
 
-#### Geographic Insights
-- **UK Dominance:** Primary market with highest order volume
-- **International Expansion:** Customers in EU and beyond (France, USA, etc.)
-- **Revenue per Capita:** Varies by country - Germany and Netherlands show strong metrics
+## 5. Strong Q4 seasonality
 
----
+- **November 2011: £1.44M**, 2.9× February (£0.50M). September to November bring **37.7 %** of the revenue of the 12 full months *(monthly_revenue)*.
+- December 2011 only covers 1–9 December and is shown as partial.
+- **Recommendation:** secure stock for top products by August; the busiest month is November, not December, because these customers resell before Christmas.
 
-### 2. Sales Performance
+## 6. A short list of products makes half of revenue
 
-#### Revenue Trends
-- **Seasonal Patterns:** Clear peaks observed (especially around holidays)
-- **Month-over-Month Growth:** Analyzed for growth trajectory
-- **Peak Months:** December typically shows highest revenue (Christmas shopping)
-- **Off-Season:** January-March shows lower activity
+- **251 of 3,902 products (6 %) make half of all revenue**; the top 20 % make 78.1 % *(product_concentration)*.
+- Top products: Regency Cakestand 3 Tier (£168k), Party Bunting (£98k), White Hanging Heart T-Light Holder (£98k), Jumbo Bag Red Retrospot (£90k) *(top_products)*.
+- **Recommendation:** never let these 251 products run out of stock; review the long tail for range simplification.
 
-#### Sales Velocity
-- **Orders per Day:** Ranges from 10-100+ orders daily
-- **Peak Hours:** Concentration during business hours and evenings
-- **Day of Week:** Weekends typically show higher activity
+## 7. A few very large international accounts
 
-#### Average Order Value (AOV)
-- **Range:** Significant variation from £5 to £100+
-- **Median Order:** Around £15-20
-- **Trend:** Relatively stable with seasonal variations
+- The UK is **84.7 %** of revenue. The Netherlands (**9 customers, £282k**, average order £3,067) and Ireland (**3 customers, £256k**) are a few large accounts rather than markets *(countries)*.
+- **Recommendation:** manage these accounts individually; a "Netherlands market strategy" would be built on nine customers.
 
-#### Order Composition
-- **Basket Size:** Most orders contain 1-3 different products
-- **Quantity per Line:** Small quantities typical (1-10 units)
-- **Bundle Purchases:** Customers occasionally buy in bulk (24+ units)
+## 8. Cancellations
 
----
+- 3,422 cancelled invoices worth **£479k**, 4.9 % of product sales *(cancellations_summary)*.
+- Two single orders (80,995 paper birdies, 74,215 storage jars) were cancelled straight after being placed. They are excluded from sales, otherwise they would rank as top products *(most_cancelled_products)*.
+- **Recommendation:** a plausibility check on very large orders (for example a confirmation step above a quantity limit).
 
-### 3. Product Performance
+## Data quality notes
 
-#### Top Performing Products
-- **Best Sellers:** Identified through revenue analysis
-- **High Frequency Items:** Popular products purchased frequently
-- **High-Value Items:** Premium products driving disproportionate revenue
+| Check | Rows *(data_quality)* |
+|---|---:|
+| All rows | 541,909 |
+| Missing CustomerID | 135,080 |
+| Cancellation lines | 9,288 |
+| Quantity ≤ 0 | 10,624 |
+| Price ≤ 0 | 2,517 |
+| Postage / fees / discounts / vouchers | 2,950 |
+| Sales reversed by an exact matching cancellation | 4,032 |
+| Exact duplicate rows (kept) | 5,268 |
+| **Product sale lines used** | **523,780** |
+| of which with CustomerID | 392,359 |
 
-#### Product Categories (by description analysis)
-1. **Postage Services:** Frequently purchased add-on
-2. **Decorative Items:** Strong performer (ornaments, lights)
-3. **Apparel:** Growing category
-4. **Toys & Gifts:** Core business category
-5. **Dinnerware & Kitchenware:** Steady performers
-6. **Storage Solutions:** Consistent demand
-
-#### Pricing Analysis
-- **Price Sweet Spot:** £2-£5 price range shows highest sales volume
-- **Premium Products:** £10+ items have lower frequency but higher value
-- **Budget Items:** Under £1 items drive volume but lower margins
-
-#### Product Lifecycle
-- **New Products:** Continuous introduction in test phase
-- **Mature Products:** Consistent performers with stable demand
-- **Seasonal Items:** Holiday-specific products with clear peaks
-- **Declining Products:** Some items show decreasing sales - candidates for discontinuation
-
-#### Cross-Selling Opportunities
-- **Frequently Co-Purchased:** Certain product combinations appear together regularly
-- **Bundle Potential:** Data supports opportunity for product bundles
-- **Recommendation System:** Strong basis for recommendation engine development
-
----
-
-### 4. Data Quality Insights
-
-#### Data Issues Identified
-- **NULL Customer IDs:** Some records lack customer identification (guest orders?)
-- **Cancellations:** Invoices prefixed with 'C' indicate returns/cancellations
-- **Negative Quantities:** Represent returns or corrections (data quality matter)
-- **Negative Prices:** Minimal - indicates data quality is generally good
-- **Outliers:** Some extremely large orders (1000+ units) - verify legitimacy
-
-#### Data Strengths
-- **Complete Records:** Most transactions have all required fields
-- **Date Accuracy:** Timestamps are present and reasonable
-- **Geographic Data:** Country information comprehensive
-- **Price Consistency:** Unit prices remain stable for same products
-
----
-
-## 💡 Business Recommendations
-
-### 1. Customer Strategy
-- **VIP Program:** Create loyalty program for top-tier customers
-- **Retention Focus:** Target "At Risk" segment with personalized offers
-- **Win-Back Campaign:** Reach out to "Lost" customers with special promotions
-- **Geographic Expansion:** Double down on high-performing countries
-- **Customer Service:** Allocate resources based on CLV
-
-### 2. Sales Optimization
-- **Peak Period Preparation:** Inventory and staffing for holiday season
-- **Pricing Strategy:** Test premium pricing on high-demand items
-- **Flash Sales:** Leverage off-peak periods to drive volume
-- **Bundle Offers:** Create product bundles based on co-purchase analysis
-- **AOV Improvement:** Introduce upselling opportunities (current median: £15-20)
-
-### 3. Product Strategy
-- **Inventory Management:** Stock top-performing products adequately
-- **New Product Testing:** Smaller batch testing before full rollout
-- **SKU Rationalization:** Evaluate underperforming products for discontinuation
-- **Seasonal Planning:** Prepare seasonal products in advance
-- **Quality Assurance:** Address high return items
-
-### 4. Marketing & Analytics
-- **Seasonal Campaigns:** Plan campaigns around peak periods
-- **Geographic Targeting:** Customize marketing by country
-- **Product Recommendations:** Implement based on cross-sell analysis
-- **Data Dashboard:** Create real-time dashboard for sales tracking
-- **Customer Segmentation:** Use RFM model for targeted marketing
-
----
-
-## 📈 Metrics to Monitor
-
-### Key Performance Indicators (KPIs)
-1. **Revenue Growth:** Track month-over-month and year-over-year
-2. **Customer Acquisition Cost (CAC):** Monitor for efficiency
-3. **Customer Lifetime Value (CLV):** Focus on improving CLV ratio
-4. **Average Order Value (AOV):** Target growth through upselling
-5. **Customer Retention Rate:** Key indicator of business health
-6. **Product Return Rate:** Quality and satisfaction metric
-7. **Geographic Revenue Mix:** Track market concentration
-8. **Repeat Purchase Rate:** Customer loyalty indicator
-
----
-
-## 🔧 Technical Insights
-
-### SQL Query Complexity
-- **Advanced Features Used:**
-  - Window functions (RANK, ROW_NUMBER, LAG, LEAD)
-  - CTEs (Common Table Expressions) for complex logic
-  - CASE statements for categorization
-  - Aggregation with PARTITION BY for grouping
-  - Percentile calculations for distribution analysis
-
-### Data Processing Recommendations
-- **Indexes:** Create on frequently queried columns (CustomerID, InvoiceDate, StockCode)
-- **Materialized Views:** Consider for frequently used aggregations
-- **ETL Process:** Regular data quality checks recommended
-- **Data Warehouse:** Consider for historical analysis
-
----
-
-## 📋 Analysis Files Guide
-
-1. **01_schema.sql** - Database structure and table design
-2. **02_data_loading.sql** - Data import and quality validation
-3. **03_exploratory_analysis.sql** - Initial data exploration
-4. **04_customer_analysis.sql** - RFM, CLV, segmentation analysis
-5. **05_sales_analysis.sql** - Revenue, trends, performance metrics
-6. **06_product_analysis.sql** - Product performance and categories
-
----
-
-## 🎯 Next Steps
-
-1. **Data Warehouse:** Migrate data to proper analytics infrastructure
-2. **Dashboards:** Create Tableau/Power BI dashboards for stakeholders
-3. **Predictive Models:** Develop churn prediction and CLV forecasting models
-4. **A/B Testing:** Test recommendations and marketing strategies
-5. **Automation:** Automate reporting and alerting
-6. **Deeper Analysis:** Cohort analysis and propensity modeling
-
----
-
-## 📝 Conclusion
-
-This e-commerce dataset provides rich insights into customer behavior and sales patterns. The SQL analysis reveals:
-
-- **Strong customer loyalty** with significant repeat purchase rate
-- **Clear seasonal patterns** with peak performance during holidays
-- **Geographic concentration** primarily in UK market
-- **Product-market fit** with popular gift/household items category
-- **Data quality** generally good with minor cleansing needs
-
-With proper execution of recommendations, this business can significantly improve revenue, customer lifetime value, and operational efficiency.
-
----
-
-**Analysis Date:** February 2026  
-**Data Period:** 2010-2011  
-**Status:** Complete Analysis  
-**Next Review:** Quarterly
+25 % of lines have no customer ID, so customer-level results (sections 1–3) describe identified customers only.
