@@ -1,0 +1,11 @@
+check_name,rows
+all rows,541909
+missing CustomerID,135080
+cancellation lines (C...),9288
+quantity <= 0,10624
+price <= 0,2517
+service / accounting lines,2950
+sales reversed by a matching cancellation,4032
+"exact duplicate rows (kept, see README)",5268
+rows kept as product sales,523780
+of which with CustomerID,392359
